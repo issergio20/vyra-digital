@@ -1,0 +1,381 @@
+@import "tailwindcss";
+
+/* inline: переменные шрифтов next/font заданы на <html>, а не на :root */
+@theme inline {
+  --font-display: var(--font-benzin), var(--font-inter-tight), system-ui, sans-serif;
+  --font-sans: var(--font-inter-tight), system-ui, sans-serif;
+}
+
+/* Токены — DESIGN_SYSTEM.md */
+@theme {
+  /* Тёмная тема по мотивам mos-digital.com: тёмное поле, красный акцент, белый текст. */
+  --color-ground: #0e1016;
+  --color-ground-deep: #08090c;
+  --color-surface: #14161d;
+  --color-raised: #1d2029;
+  --color-raised-hover: #262a35;
+  --color-raised-2: #2f3441;
+  --color-fg: #f4f4f6;
+  --color-fg-soft: #a3a6ae;
+  --color-line: rgb(255 255 255 / 0.14);
+  --color-accent: #ff4533;
+  /* Красный для текста и тонких значков: на тёмном поле совпадает с акцентом, на светлом темнее. */
+  --color-accent-ink: #ff4533;
+  --color-accent-pressed: #e8392a;
+  /* Заливка красных кнопок: чуть глубже акцента, чтобы белый полужирный текст проходил
+     контраст AA (4,6:1) при любом размере. */
+  --color-accent-strong: #de321e;
+  --color-accent-strong-pressed: #c42915;
+  --color-on-accent: #0e1016;
+  /* Постоянно тёмный — для кнопок на красной заливке: в светлой теме ground белый. */
+  --color-night: #0e1016;
+  --color-draft: #ffce3a;
+  --color-error: #ff7b6e;
+
+  --radius-ui: 10px;
+
+  /* Плавная шкала от 360 до 2560 px: каждый размер растёт по всей ширине, а не упирается
+     в потолок на 1440 — на больших мониторах текст не мельчит. Мин. значения — для 360 px. */
+  --text-small: clamp(0.875rem, 0.844rem + 0.136vw, 1.0625rem);
+  --text-body: clamp(1.03rem, 0.985rem + 0.205vw, 1.3125rem);
+  --text-lead: clamp(1.1875rem, 1.096rem + 0.409vw, 1.75rem);
+  --text-statement: clamp(1.25rem, 1.086rem + 0.727vw, 2.25rem);
+  --text-head: clamp(1.5rem, 1.05rem + 2vw, 4.25rem);
+  --text-button: clamp(1.0625rem, 0.99rem + 0.2vw, 1.3125rem);
+
+  --spacing-gutter: clamp(1rem, 0.85rem + 1.1vw, 3rem);
+  --spacing-section: clamp(4.5rem, 2.5rem + 7vw, 13rem);
+
+  /* Движение. Встроенные кривые слишком мягкие: ease-out переопределён сильной кривой,
+     и все утилиты ease-out и transition-* по умолчанию берут её. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --default-transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  --default-transition-duration: 160ms;
+}
+
+/* Светлая тема — по переключателю в шапке (data-theme="light" на <html>).
+   Те же роли, другие значения: белое поле, почти чёрный текст, тот же красный. */
+:root[data-theme="light"] {
+  --color-ground: #ffffff;
+  --color-ground-deep: #f1f2f5;
+  --color-surface: #f5f6f8;
+  --color-raised: #eceef2;
+  --color-raised-hover: #e2e5eb;
+  --color-raised-2: #d6dae2;
+  --color-fg: #0d0d0d;
+  --color-fg-soft: #50545e;
+  --color-line: rgb(0 0 0 / 0.14);
+  --color-accent-ink: #cc2a1a;
+  --color-draft: #6b4a00;
+  --color-error: #b3261e;
+  color-scheme: light;
+}
+
+/* Наведение меняет цвет плавно, а не скачком; утилиты transition-* перекрывают это правило. */
+@layer base {
+  a,
+  button,
+  summary {
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      text-decoration-color 150ms ease;
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+/* Крупный шрифт в настройках телефона не должен выталкивать страницу вбок (WCAG 1.4.4):
+   элементы сеток сжимаются, длинные слова переносятся по слогам. */
+.grid > *,
+.flex > * {
+  min-width: 0;
+}
+
+p,
+li,
+dt,
+dd,
+h1,
+h2,
+h3,
+summary,
+label {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-fg);
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  --focus: var(--color-fg);
+}
+
+/* Тёмные поверхности: кольцо фокуса жёлтое, на светлых — синька. */
+.surface-dark {
+  --focus: var(--color-fg);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Переход по якорю не прячет заголовок под липкой шапкой (60 px) */
+[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Вход частей первого экрана: только transform и opacity, без JS — контент не может остаться скрытым. */
+.enter {
+  animation: enter 640ms var(--ease-out) var(--enter-delay, 0ms) both;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+}
+
+/* Вход секций: .reveal-wait ставит скрипт только элементам ниже экрана, без JS всё видно сразу. */
+.reveal-wait {
+  opacity: 0;
+  translate: 0 24px;
+}
+
+.reveal-in {
+  transition:
+    opacity 640ms var(--ease-out) var(--reveal-delay, 0ms),
+    translate 640ms var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+/* Аккордеоны (<details>): высота раскрывается плавно там, где браузер это умеет
+   (::details-content, interpolate-size); в остальных — открывается сразу, как раньше. */
+:root {
+  interpolate-size: allow-keywords;
+}
+
+details::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 240ms var(--ease-out),
+    content-visibility 240ms allow-discrete;
+}
+
+details[open]::details-content {
+  block-size: auto;
+}
+
+/* Меню на телефоне: появляется за 240 мс, закрывается быстрее — за 160 мс. */
+dialog {
+  opacity: 0;
+  translate: 0 -12px;
+  transition:
+    opacity 160ms var(--ease-out),
+    translate 160ms var(--ease-out),
+    overlay 160ms allow-discrete,
+    display 160ms allow-discrete;
+}
+
+dialog[open] {
+  opacity: 1;
+  translate: none;
+  transition-duration: 240ms;
+
+  @starting-style {
+    opacity: 0;
+    translate: 0 -12px;
+  }
+}
+
+/* Первый экран: медленные орбиты и лента услуг. Постоянное движение — linear;
+   только transform, без перерисовки. */
+.hero-orbit-slow {
+  animation: hero-spin 60s linear infinite;
+}
+
+.hero-orbit-fast {
+  animation: hero-spin 36s linear infinite reverse;
+}
+
+.hero-ticker {
+  animation: hero-ticker 45s linear infinite;
+}
+
+@keyframes hero-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes hero-ticker {
+  to {
+    translate: -50% 0;
+  }
+}
+
+/* Курсор (CustomCursor): точка и кольцо. Системный курсор прячется только когда
+   компонент включился — без JS, на тач-экранах и при «меньше движения» он обычный. */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  pointer-events: none;
+  border-radius: 9999px;
+  opacity: 0;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-accent);
+}
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--color-fg);
+  transition:
+    width 200ms var(--ease-out),
+    height 200ms var(--ease-out),
+    opacity 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none;
+}
+
+.has-custom-cursor :is(input, textarea, [contenteditable="true"]) {
+  cursor: text;
+}
+
+[data-cursor="on"] .cursor-dot,
+[data-cursor="on"] .cursor-ring {
+  opacity: 1;
+}
+
+[data-cursor-state="link"] .cursor-ring {
+  width: 64px;
+  height: 64px;
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+
+[data-cursor-state="text"] .cursor-dot,
+[data-cursor-state="text"] .cursor-ring {
+  opacity: 0;
+}
+
+[data-cursor-down="true"] .cursor-ring {
+  width: 26px;
+  height: 26px;
+}
+
+/* Микроанимация ссылок: подчёркивание подтягивается к тексту при наведении.
+   В слое base — утилиты transition-* у кнопок важнее. */
+@layer base {
+  a {
+    transition-property: color, background-color, text-decoration-color, text-underline-offset;
+  }
+}
+
+/* Вне слоя: должно перекрыть утилиту underline-offset-* у ссылки. */
+@media (hover: hover) and (pointer: fine) {
+  a.underline:hover {
+    text-underline-offset: 3px;
+  }
+}
+
+/* Мессенджеры: пункты поднимаются снизу по очереди, ближний к кнопке — первым. */
+.social-dock-item {
+  transition:
+    opacity 200ms var(--ease-out),
+    translate 200ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 40ms);
+
+  @starting-style {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+/* Меньше движения — не ноль движения: перемещения и масштаб убраны, плавная смена
+   прозрачности осталась, она помогает заметить, что появилось новое. */
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation-name: enter-fade;
+    animation-duration: 240ms;
+  }
+
+  .reveal-wait {
+    translate: none;
+  }
+
+  .reveal-in {
+    transition-duration: 240ms;
+  }
+
+  dialog,
+  dialog[open],
+  .social-dock-item {
+    translate: none;
+  }
+
+  .hero-orbit-slow,
+  .hero-orbit-fast,
+  .hero-ticker {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scale: none !important;
+  }
+}

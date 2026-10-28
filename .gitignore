@@ -1,0 +1,19 @@
+# Зависимости и сборки сайта — в site/.gitignore.
+
+# Шрифт Benzin: лицензия разрешает использование на сайте, но не распространение файлов.
+# Как подключить — site/src/fonts/README.md.
+/site/src/fonts/Benzin font/
+
+# Рабочий бриф владельца — не для открытого репозитория.
+/doc/
+
+# Статическая копия сайта — собирается командой npm run export:static.
+/static-site/
+
+# Локальные настройки инструментов.
+/.claude/
+/.impeccable/
+/.taste-skill/
+
+Thumbs.db
+.DS_Store
